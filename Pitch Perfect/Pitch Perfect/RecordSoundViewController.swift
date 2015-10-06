@@ -64,15 +64,21 @@ class RecordSoundViewController: UIViewController, AVAudioRecorderDelegate {
 
         let recordingName = "my_audio.wav"
         let pathArray = [dirPath, recordingName]
-        let filePath = NSURL.fileURLWithPathComponents(pathArray)
+        let filePath = NSURL.fileURLWithPathComponents(pathArray)!
         
-        var session = AVAudioSession.sharedInstance()
+        let session = AVAudioSession.sharedInstance()
         do {
             try session.setCategory(AVAudioSessionCategoryPlayAndRecord)
         } catch _ {
         }
         
-        audioRecorder = try? AVAudioRecorder(URL: filePath, settings: nil)
+        let settings = [
+            AVFormatIDKey: Int(kAudioFormatULaw),
+            AVSampleRateKey: 12000.0,
+            AVNumberOfChannelsKey: 1 as NSNumber,
+            AVEncoderAudioQualityKey: AVAudioQuality.High.rawValue
+        ]
+        audioRecorder = try! AVAudioRecorder(URL: filePath, settings: settings)
         audioRecorder.delegate = self
         audioRecorder.meteringEnabled = true
         audioRecorder.prepareToRecord()
